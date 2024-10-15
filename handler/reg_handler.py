@@ -32,7 +32,7 @@ async def handler1(message: Message, state: FSMContext):
     await state.update_data(name=message.chat.first_name if message.text == "0" else message.text)
     await state.set_state(RegisterData.category)
     await message.answer("Select default category",
-                         reply_markup=util.build_buttons([category.value for category in Category], 'cat1').as_markup())
+                         reply_markup=util.build_button_for_reg([category.value for category in Category], 'cat1').as_markup())
 
 
 @route.callback_query(F.data.startswith("cat1_"))
@@ -43,7 +43,7 @@ async def handle_category_selection(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer("Category saved. You can now proceed with the next step.")
     await state.set_state(RegisterData.lang)
     await callback.message.answer("Select your language",
-                                  reply_markup=util.build_buttons([lang.value for lang in Language],
+                                  reply_markup=util.build_button_for_reg([lang.value for lang in Language],
                                                                   'lang1').as_markup())
 
 
@@ -52,12 +52,12 @@ async def handle_category_selection(callback: CallbackQuery, state: FSMContext):
     lang = callback.data.split("_")[1]
     await state.update_data(lang=Language.from_initials(lang))
     data = await state.get_data()
-    user = await user_service.create(
+    await user_service.create(
         User(id=callback.message.chat.id, name=data["name"], category=data["category"], lang=data["lang"]))
     await state.clear()
-    translated_texts = await answer_by_lang_with_redis_read(
-        "All settings is configured|All settings is configured now you can test our bot",
-        user)
+    translated_texts = await answer_by_lang_with_redis(
+        "All settings is configured|All settings is configured now you can test our bot",callback.message.chat.id,
+        user_service)
 
     await callback.answer(text=translated_texts.split('|')[0])
     await callback.message.answer(translated_texts.split('|')[1])

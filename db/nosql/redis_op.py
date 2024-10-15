@@ -20,7 +20,7 @@ class RedisDictCachable(RedisCachable):
         val = redis_client.get(self.key)
         if val is None:
             spk = self.key.split('_')
-            val = await self.func(spk[0:len(spk) - 2])
+            val = await self.func(spk[0:len(spk) - 1][0])
             data_json = json.dumps(val)
             redis_client.setex(self.key, self.lifetime, data_json)
             return val

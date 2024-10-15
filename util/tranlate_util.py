@@ -12,6 +12,7 @@ MAX_LEN_CACHE = 200
 
 async def adjust_lang(text: str, lang: Language) -> dict[str, str]:
     lan = lang.value.strip().lower()
+    print('text = ',text)
     detected = translator.detect(text)
     if lan == detected.lang:
         return {"text": text, "lang": detected.lang}
