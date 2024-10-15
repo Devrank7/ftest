@@ -40,8 +40,9 @@ async def translated_text(message: Message, state: FSMContext):
         return
     user = await user_service.read(message.chat.id)
     val = user.lang.value
-    translated = translator.translate(message.text, dest=str(val))
-    print(translated.text)
+    translated = translator.translate(f"{message.text}|Translated text|from|to", dest=str(val))
+    tr_text = translated.text.split('|')
+    print(tr_text[0])
     detected = translator.detect(message.text)
     print(detected.lang)
-    await message.answer(f"Translated text {translated.text} from {detected.lang} to {str(val)}")
+    await message.answer(f"{tr_text[1]} {tr_text[0]} {tr_text[2]} {detected.lang} {tr_text[3]} {str(val)}")

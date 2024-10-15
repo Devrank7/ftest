@@ -23,5 +23,5 @@ class RegisterCheckMiddleware(BaseMiddleware):
         builder = InlineKeyboardBuilder()
         button = InlineKeyboardButton(text="Register settings for this chat", callback_data="register")
         builder.add(button)
-        await event.message.answer(
-            "Hello world! You need to register", reply_markup=builder.as_markup())
+        await event.answer(
+            text="Hello world! You need to register", reply_markup=builder.as_markup())
