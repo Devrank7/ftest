@@ -9,6 +9,7 @@ from db.db import async_session
 from db.service import UserService
 from handler.middleware.middleware import RegisterCheckMiddleware
 from util import util
+from util.tranlate_util import answer_by_lang_with_redis
 
 router = Router()
 router.message.middleware(RegisterCheckMiddleware())
@@ -29,7 +30,8 @@ async def my_handler(message: Message):
 @router.message(Command("deep_gcloud"))
 async def translate_and_recognize(message: Message, state: FSMContext):
     await state.set_state(Translated.translation)
-    await message.answer("Type text to translate.")
+    translated_texts = await answer_by_lang_with_redis('Type text to translate.', message.chat.id, user_service)
+    await message.answer(translated_texts)
 
 
 @router.message(Translated.translation)

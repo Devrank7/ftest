@@ -3,9 +3,8 @@ from aiogram.filters import CommandStart
 from aiogram.types import Message
 
 from db.db import async_session
-from db.nosql import redis_op
 from db.service import UserService
-from util.util import answer_by_lang_with_redis
+from util.tranlate_util import answer_by_lang_with_redis
 from .middleware.middleware import RegisterCheckMiddleware
 
 router = Router()

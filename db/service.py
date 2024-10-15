@@ -11,11 +11,11 @@ class UserService:
         super().__init__()
         self.session = session
 
-    async def create(self, base: User) -> None:
+    async def create(self, base: User) -> User:
         async with self.session() as session:
-            async with session.begin():
-                session.add(base)
-        await session.commit()
+            session.add(base)
+            await session.commit()
+            return base
 
     async def read(self, user_id: int) -> User:
         async with self.session() as session:
@@ -30,11 +30,12 @@ class UserService:
             await session.execute(query)
             await session.commit()
 
-    async def update(self, user_id: int, base: User) -> None:
+    async def update(self, user_id: int, base: User) -> User:
         async with self.session() as session:
             user = await session.get(User, user_id)
             user.copy_data(other_usr=base)
             await session.commit()
+            return user
 
     async def update_category(self, user_id: int, category: Category) -> None:
         async with self.session() as session:
