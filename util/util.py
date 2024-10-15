@@ -1,3 +1,5 @@
+from aiogram.fsm.context import FSMContext
+from aiogram.types import Message
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 
@@ -16,3 +18,11 @@ def build_button_with_back(callback_data: str, values: list[str], prefix: str,
     builder.row()
     builder.button(text="Back", callback_data=callback_data)
     return builder
+
+
+async def exit_handler(message: Message, state: FSMContext, state_name: str) -> bool:
+    if message.text.strip() == '/exit':
+        await state.clear()
+        await message.answer(f"Exit {state_name} state")
+        return True
+    return False

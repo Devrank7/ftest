@@ -6,7 +6,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from dotenv import load_dotenv
 
 from db.db import init_db
-from handler import handler, reg_handler, set_handler, view_handler
+from handler import handler, reg_handler, set_handler, view_handler, ai_handler
 
 load_dotenv()
 API_KEY = os.getenv("API_TOKEN")
@@ -23,6 +23,7 @@ async def main():
     dp.include_router(reg_handler.route)
     dp.include_router(set_handler.router)
     dp.include_router(view_handler.router)
+    dp.include_router(ai_handler.router)
     await dp.start_polling(bot)
 
 
