@@ -4,7 +4,6 @@ from aiogram.types import Message
 from googletrans import Translator
 
 from db.db import async_session
-from db.enum.enums import Language
 from db.service import UserService
 from handler.middleware.middleware import RegisterCheckMiddleware
 
