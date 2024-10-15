@@ -4,9 +4,12 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 from googletrans import Translator
 
 from db.enum.enums import Language
+from db.nosql import redis_op
 from db.service import UserService
 
 translator = Translator()
+
+MAX_LEN_CACHE = 200
 
 
 def build_buttons(values: list[str], prefix: str, separator: int = 2) -> InlineKeyboardBuilder:
@@ -43,7 +46,14 @@ async def adjust_lang(text: str, lang: Language) -> dict[str, str]:
     return {"text": translated.text, "lang": detected.lang}
 
 
-async def answer_by_lang(text: str,chat_id: int, user_service: UserService) -> str:
+async def answer_by_lang_with_redis(text: str, chat_id: int, user_service: UserService, max_len: int = 100) -> str:
     user = await user_service.read(chat_id)
-    dic = await adjust_lang(text=text, lang=user.lang)
+    print("user lang = ", user.lang)
+
+    async def cacheable_function(texts: str):
+        print("Text = ", texts)
+        return await adjust_lang(text=texts, lang=user.lang)
+
+    dic = await redis_op.cacheable(key=f"{text}_{user.lang.value.lower()}", func=cacheable_function) if len(text) < min(
+        max_len, MAX_LEN_CACHE) else await cacheable_function(text)
     return dic['text']
