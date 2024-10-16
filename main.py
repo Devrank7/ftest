@@ -24,8 +24,19 @@ async def main():
     dp.include_router(set_handler.router)
     dp.include_router(view_handler.router)
     dp.include_router(ai_handler.router)
-    await dp.start_polling(bot)
+    try:
+        await dp.start_polling(bot)
+    finally:
+        await bot.session.close()
+
+
+def shutdown():
+    for task in asyncio.all_tasks():
+        task.cancel()
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except (KeyboardInterrupt, SystemExit):
+        print("Программа была прервана.")

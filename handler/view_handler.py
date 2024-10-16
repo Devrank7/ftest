@@ -45,4 +45,4 @@ async def translated_text(message: Message, state: FSMContext):
     print(tr_text[0])
     detected = translator.detect(message.text)
     print(detected.lang)
-    await message.answer(f"{tr_text[1]} {tr_text[0]} {tr_text[2]} {detected.lang} {tr_text[3]} {str(val)}")
+    await message.answer(f'{tr_text[1]} "{tr_text[0]}" {tr_text[2]} <{detected.lang}> {tr_text[3]} <{str(val)}>')

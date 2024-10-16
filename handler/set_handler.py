@@ -28,13 +28,17 @@ async def select_handler(message: Message, state: FSMContext):
 
 @router.callback_query(F.data == "category")
 async def category_handler(callback: CallbackQuery, state: FSMContext):
-    translated_texts = await answer_by_lang_with_redis('Select category|Back', callback.message.chat.id, user_service)
+    translated_texts = await answer_by_lang_with_redis('Select category | Back', callback.message.chat.id, user_service)
     tt_split = translated_texts.split("|")
+    print('back = ', tt_split[1], ' sc = ', tt_split[0])
     await callback.answer(tt_split[0], )
     await state.set_state(Form.state_two)
+    async def translate(text: str) -> str:
+        return await answer_by_lang_with_redis(text, callback.message.chat.id,
+                                               user_service)
     rep_markup = await util.build_button_with_back("back",
                                                    [category.value for category in Category],
-                                                   'cat2', lambda text: text,
+                                                   'cat2', translate,
                                                    tt_split[1])
     await callback.message.edit_text(tt_split[0],
                                      reply_markup=rep_markup.as_markup())
@@ -42,18 +46,17 @@ async def category_handler(callback: CallbackQuery, state: FSMContext):
 
 @router.callback_query(F.data == "language")
 async def category_handler(callback: CallbackQuery, state: FSMContext):
-    translated_texts = await answer_by_lang_with_redis('Select language|Back', callback.message.chat.id,
+    translated_texts = await answer_by_lang_with_redis('Select language , Back', callback.message.chat.id,
                                                        user_service)
-    tt_split = translated_texts.split("|")
+    tt_split = translated_texts.split(",")
     await callback.answer(tt_split[0], )
     await state.set_state(Form.state_two)
 
-    async def translate(text: str) -> str:
-        return await answer_by_lang_with_redis(text, callback.message.chat.id,
-                                               user_service)
+    async def same(text: str) -> str:
+        return text
 
     rep_markup = await util.build_button_with_back("back", [lang.value for lang in Language], 'lang2',
-                                                   tr_func=translate, back_text=tt_split[1])
+                                                   tr_func=same, back_text=tt_split[1])
     await callback.message.edit_text(tt_split[0], reply_markup=rep_markup.as_markup())
 
 

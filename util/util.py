@@ -24,9 +24,11 @@ async def build_buttons_for_set(values: list[str], prefix: str, tr_func,
                           separator: int = 2) -> InlineKeyboardBuilder:
     tr_text = ''
     for t in values:
-        tr_text += t + '|'
+        tr_text += t + ','
+    print('on text = ',tr_text)
     translated_text = await tr_func(tr_text)
-    translated_text = translated_text.split('|')
+    print('in text = ',translated_text)
+    translated_text = translated_text.split(',')
     return build_buttons(values, prefix, lambda i: translated_text[i], separator)
 
 
