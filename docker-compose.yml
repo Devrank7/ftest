@@ -1,0 +1,41 @@
+version: '3.8'
+services:
+  bot:
+    build: .
+    container_name: my_python_bot
+    restart: always
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=tfree1
+      - POSTGRES_USER=post
+      - POSTGRES_PASSWORD=post
+    depends_on:
+      - redis
+      - postgres
+
+  redis:
+    image: redis:6-alpine
+    container_name: my_redis
+    restart: always
+    ports:
+      - "7379:6379"
+
+  postgres:
+    image: postgres:13-alpine
+    container_name: my_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: tfree1
+      POSTGRES_USER: post
+      POSTGRES_PASSWORD: post
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+    name: "post_data"
