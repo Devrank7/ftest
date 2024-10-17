@@ -9,9 +9,8 @@ COPY requirements.txt .
 
 # Установим зависимости
 RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install gunicorn
 
 # Копируем весь проект в контейнер
 COPY . .
-
-# Укажем команду для запуска бота
-CMD ["python", "main.py"]
+CMD ["sh", "-c", "gunicorn -b 0.0.0.0:8000 background:app & python main.py"]
