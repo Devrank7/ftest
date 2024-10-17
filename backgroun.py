@@ -10,10 +10,5 @@ def index():
     return 'I am alive'
 
 
-def run():
+if __name__ == '__main__':
     app.run(host='0.0.0.0', port=80)
-
-
-def keep_alive():
-    t = Thread(target=run)
-    t.start()

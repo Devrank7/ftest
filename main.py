@@ -4,8 +4,6 @@ import os
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 from dotenv import load_dotenv
-
-from backgroun import keep_alive
 from db.db import init_db
 from handler import handler, reg_handler, set_handler, view_handler, ai_handler
 
@@ -36,7 +34,6 @@ def shutdown():
         task.cancel()
 
 
-keep_alive()
 if __name__ == "__main__":
     try:
         asyncio.run(main())
